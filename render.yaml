@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: streaming-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 4 --worker-class sync --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false  # set manually in Render dashboard
+      - key: API_SECRET
+        sync: false  # set manually in Render dashboard
