@@ -8,4 +8,4 @@ services:
       - key: ANTHROPIC_API_KEY
         sync: false  # set manually in Render dashboard
       - key: API_SECRET
-        sync: false  # set manually in Render dashboard
+        generateValue: true  # set manually in Render dashboard
