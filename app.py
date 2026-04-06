@@ -87,7 +87,7 @@ def stream_mock():
     return Response(
         stream_with_context(mock_generate()),
         content_type="text/plain; charset=utf-8",
-        headers={"Cache-Control": "no-cache"},
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
@@ -104,7 +104,7 @@ def stream_claude():
         return Response(
             stream_with_context(generator),
             content_type="text/plain; charset=utf-8",
-            headers={"Cache-Control": "no-cache"},
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500

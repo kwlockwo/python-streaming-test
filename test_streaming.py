@@ -56,7 +56,7 @@ def test_endpoint(label: str, url: str, payload: dict | None = None):
                 chunk_times.append(now - start)
                 chunks.append(chunk)
                 elapsed = chunk_times[-1]
-                preview = chunk[:60].decode("utf-8", errors="replace")
+                preview = chunk.decode("utf-8", errors="replace")
                 print(f"  #{len(chunks):>3}  +{elapsed:.3f}s  {len(chunk):>5}B  {preview!r}")
 
     except httpx.RequestError as e:
@@ -113,5 +113,5 @@ if __name__ == "__main__":
     test_endpoint(
         "CLAUDE STREAM (haiku)",
         f"{BASE_URL}/stream/claude",
-        payload={"prompt": "Count slowly from 1 to 10, one number per line."},
+        payload={"prompt": "Write a detailed description of the four seasons, spending at least two paragraphs on each one."},
     )
