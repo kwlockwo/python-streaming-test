@@ -72,6 +72,28 @@ def claude_generate(prompt: str, system: str | None = None):
 
 
 # ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+SSE_CONTENT_TYPE = "text/event-stream"
+
+SSE_HEADERS = {
+    "Cache-Control": "no-cache, no-transform",
+    "X-Accel-Buffering": "no",
+    "Connection": "keep-alive",
+}
+
+
+def as_sse(generator):
+    for chunk in generator:
+        text = chunk.decode("utf-8", errors="replace") if isinstance(chunk, bytes) else chunk
+        for line in text.splitlines(keepends=False):
+            yield f"data: {line}\n"
+        yield "\n"
+    yield "data: [DONE]\n\n"
+
+
+# ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
 
@@ -126,6 +148,47 @@ def stream_claude():
             stream_with_context(generator),
             content_type="text/plain; charset=utf-8",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ---------------------------------------------------------------------------
+# SSE routes
+# ---------------------------------------------------------------------------
+
+@app.get("/stream/sse/mock")
+@require_bearer
+def stream_sse_mock():
+    return Response(
+        stream_with_context(as_sse(mock_generate())),
+        content_type=SSE_CONTENT_TYPE,
+        headers=SSE_HEADERS,
+    )
+
+
+@app.get("/stream/sse/file")
+@require_bearer
+def stream_sse_file():
+    return Response(
+        stream_with_context(as_sse(file_generate())),
+        content_type=SSE_CONTENT_TYPE,
+        headers=SSE_HEADERS,
+    )
+
+
+@app.post("/stream/sse/claude")
+@require_bearer
+def stream_sse_claude():
+    body = request.get_json(silent=True) or {}
+    prompt = body.get("prompt", "Say hello and introduce yourself in a few sentences.")
+    system = body.get("system")
+
+    try:
+        return Response(
+            stream_with_context(as_sse(claude_generate(prompt, system))),
+            content_type=SSE_CONTENT_TYPE,
+            headers=SSE_HEADERS,
         )
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
