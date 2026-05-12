@@ -112,7 +112,7 @@ def file_generate():
             yield chunk
 
 
-@app.get("/stream/file")
+@app.post("/stream/file")
 @require_bearer
 def stream_file():
     """Streams red_panda_story.txt in 4KB chunks."""
@@ -157,7 +157,7 @@ def stream_claude():
 # SSE routes
 # ---------------------------------------------------------------------------
 
-@app.get("/stream/sse/mock")
+@app.post("/stream/sse/mock")
 @require_bearer
 def stream_sse_mock():
     return Response(
@@ -167,7 +167,7 @@ def stream_sse_mock():
     )
 
 
-@app.get("/stream/sse/file")
+@app.post("/stream/sse/file")
 @require_bearer
 def stream_sse_file():
     return Response(

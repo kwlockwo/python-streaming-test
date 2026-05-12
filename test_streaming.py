@@ -146,7 +146,7 @@ def test_endpoint(label: str, url: str, payload: dict | None = None) -> None:
     spread = chunk_times[-1] - chunk_times[0] if len(chunk_times) > 1 else 0
     chunked = response_headers.get("transfer-encoding", "").lower() == "chunked"
 
-    print(f"\nANALYSIS:")
+    print("\nANALYSIS:")
     print(f"  TTFB:            {ttfb:.3f}s")
     print(f"  Total time:      {total_time:.3f}s")
     print(f"  TTFB ratio:      {ttfb/total_time:.0%} of total")
@@ -184,7 +184,7 @@ def test_sse_endpoint(label: str, url: str, method: str = "GET", payload: dict |
     correct_content_type = "text/event-stream" in response_headers.get("content-type", "")
     content_type_display = "text/event-stream ✓" if correct_content_type else response_headers.get("content-type", "missing") + " ⚠️"
 
-    print(f"\nANALYSIS:")
+    print("\nANALYSIS:")
     print(f"  TTFB:            {ttfb:.3f}s")
     print(f"  Total time:      {total_time:.3f}s")
     print(f"  TTFB ratio:      {ttfb/total_time:.0%} of total")
@@ -200,6 +200,6 @@ if __name__ == "__main__":
     test_endpoint("MOCK STREAM", f"{BASE_URL}/stream/mock")
     test_endpoint("FILE STREAM (red_panda_story.txt)", f"{BASE_URL}/stream/file")
     test_endpoint("CLAUDE STREAM (haiku)", f"{BASE_URL}/stream/claude", payload={"prompt": LONG_PROMPT})
-    test_sse_endpoint("SSE MOCK STREAM", f"{BASE_URL}/stream/sse/mock")
-    test_sse_endpoint("SSE FILE STREAM (red_panda_story.txt)", f"{BASE_URL}/stream/sse/file")
+    test_sse_endpoint("SSE MOCK STREAM", f"{BASE_URL}/stream/sse/mock", method="POST")
+    test_sse_endpoint("SSE FILE STREAM (red_panda_story.txt)", f"{BASE_URL}/stream/sse/file", method="POST")
     test_sse_endpoint("SSE CLAUDE STREAM (haiku)", f"{BASE_URL}/stream/sse/claude", method="POST", payload={"prompt": LONG_PROMPT})
