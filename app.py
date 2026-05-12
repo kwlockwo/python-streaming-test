@@ -80,6 +80,27 @@ def health():
     return jsonify({"status": "ok"})
 
 
+STORY_FILE = os.path.join(os.path.dirname(__file__), "red_panda_story.txt")
+CHUNK_SIZE = 4096
+
+
+def file_generate():
+    with open(STORY_FILE, "rb") as f:
+        while chunk := f.read(CHUNK_SIZE):
+            yield chunk
+
+
+@app.get("/stream/file")
+@require_bearer
+def stream_file():
+    """Streams red_panda_story.txt in 4KB chunks."""
+    return Response(
+        stream_with_context(file_generate()),
+        content_type="text/plain; charset=utf-8",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
 @app.post("/stream/mock")
 @require_bearer
 def stream_mock():

@@ -109,7 +109,13 @@ if __name__ == "__main__":
         f"{BASE_URL}/stream/mock",
     )
 
-    # 2. Claude endpoint (needs ANTHROPIC_API_KEY on the server)
+    # 2. File stream endpoint
+    test_endpoint(
+        "FILE STREAM (red_panda_story.txt)",
+        f"{BASE_URL}/stream/file",
+    )
+
+    # 3. Claude endpoint (needs ANTHROPIC_API_KEY on the server)
     test_endpoint(
         "CLAUDE STREAM (haiku)",
         f"{BASE_URL}/stream/claude",
